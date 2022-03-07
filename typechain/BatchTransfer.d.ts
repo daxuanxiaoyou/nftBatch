@@ -75,13 +75,35 @@ interface BatchTransferInterface extends ethers.utils.Interface {
 
   events: {
     "OwnershipTransferred(address,address)": EventFragment;
+    "TransferBatch(address,address,address[],uint256[])": EventFragment;
+    "TransferSingle(address,address,address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TransferBatch"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TransferSingle"): EventFragment;
 }
 
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
+>;
+
+export type TransferBatchEvent = TypedEvent<
+  [string, string, string[], BigNumber[]] & {
+    nft: string;
+    source: string;
+    dest: string[];
+    tokenIds: BigNumber[];
+  }
+>;
+
+export type TransferSingleEvent = TypedEvent<
+  [string, string, string, BigNumber] & {
+    nft: string;
+    source: string;
+    dest: string;
+    tokenId: BigNumber;
+  }
 >;
 
 export class BatchTransfer extends BaseContract {
@@ -249,6 +271,46 @@ export class BatchTransfer extends BaseContract {
     ): TypedEventFilter<
       [string, string],
       { previousOwner: string; newOwner: string }
+    >;
+
+    "TransferBatch(address,address,address[],uint256[])"(
+      nft?: string | null,
+      source?: string | null,
+      dest?: null,
+      tokenIds?: null
+    ): TypedEventFilter<
+      [string, string, string[], BigNumber[]],
+      { nft: string; source: string; dest: string[]; tokenIds: BigNumber[] }
+    >;
+
+    TransferBatch(
+      nft?: string | null,
+      source?: string | null,
+      dest?: null,
+      tokenIds?: null
+    ): TypedEventFilter<
+      [string, string, string[], BigNumber[]],
+      { nft: string; source: string; dest: string[]; tokenIds: BigNumber[] }
+    >;
+
+    "TransferSingle(address,address,address,uint256)"(
+      nft?: string | null,
+      source?: string | null,
+      dest?: null,
+      tokenId?: null
+    ): TypedEventFilter<
+      [string, string, string, BigNumber],
+      { nft: string; source: string; dest: string; tokenId: BigNumber }
+    >;
+
+    TransferSingle(
+      nft?: string | null,
+      source?: string | null,
+      dest?: null,
+      tokenId?: null
+    ): TypedEventFilter<
+      [string, string, string, BigNumber],
+      { nft: string; source: string; dest: string; tokenId: BigNumber }
     >;
   };
 

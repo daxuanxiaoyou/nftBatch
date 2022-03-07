@@ -6,6 +6,20 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 contract BatchTransfer is Ownable, ReentrancyGuard, IERC721Receiver {
+
+    event TransferSingle(
+        address indexed nft,
+        address indexed source,
+        address dest,
+        uint256 tokenId
+    );
+
+    event TransferBatch(
+        address indexed nft,
+        address indexed source,
+        address[] dest,
+        uint256[] tokenIds
+    );
     
     constructor() {}
 
@@ -25,6 +39,8 @@ contract BatchTransfer is Ownable, ReentrancyGuard, IERC721Receiver {
         for (uint i = 0; i < length; i++) {
             NFT.safeTransferFrom(from, to[i], tokenIds[i]);
         }
+
+        emit TransferBatch(Nft_addr,from,to,tokenIds);
     }
 
     function transferSingle(
@@ -39,6 +55,8 @@ contract BatchTransfer is Ownable, ReentrancyGuard, IERC721Receiver {
         IERC721 NFT = IERC721(Nft_addr);
 
         NFT.safeTransferFrom(from, to, tokenId);
+
+        emit TransferSingle(Nft_addr,from,to,tokenId);
     }
 
     function onERC721Received(
